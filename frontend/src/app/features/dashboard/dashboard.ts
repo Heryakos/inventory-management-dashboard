@@ -4,7 +4,7 @@ import { RouterModule } from '@angular/router';
 import { DashboardService } from '../../core/services/dashboard.service';
 import { StockTransactionService } from '../../core/services/stock-transaction.service';
 import { ProductService } from '../../core/services/product.service';
-import { DashboardSummary } from '../../core/models/dashboard.model';
+import { DashboardSummary, CategoryDistribution, StockMovement } from '../../core/models/dashboard.model';
 import { StockTransaction } from '../../core/models/stock-transaction.model';
 import { Product } from '../../core/models/product.model';
 import { Observable } from 'rxjs';
@@ -20,6 +20,9 @@ export class DashboardComponent implements OnInit {
   summary$!: Observable<DashboardSummary>;
   recentTransactions: StockTransaction[] = [];
   lowStockProducts: Product[] = [];
+  categoryDistributions: CategoryDistribution[] = [];
+  stockMovements: StockMovement[] = [];
+  totalCatalogProducts = 0;
 
   constructor(
     private dashboardService: DashboardService,
@@ -39,5 +42,25 @@ export class DashboardComponent implements OnInit {
       .subscribe(res => {
         this.lowStockProducts = res.items;
       });
+
+    this.dashboardService.getCategoryDistribution().subscribe(res => {
+      this.categoryDistributions = res;
+      this.totalCatalogProducts = res.reduce((acc, curr) => acc + curr.productCount, 0);
+    });
+
+    this.dashboardService.getRecentStockMovements().subscribe(res => {
+      this.stockMovements = res;
+    });
+  }
+
+  getCategoryPercentage(count: number): number {
+    if (this.totalCatalogProducts === 0) return 0;
+    return Math.round((count / this.totalCatalogProducts) * 100);
+  }
+
+  getMaxMovement(): number {
+    if (this.stockMovements.length === 0) return 10;
+    const maxVal = Math.max(...this.stockMovements.map(m => Math.max(m.stockIn, m.stockOut)));
+    return maxVal === 0 ? 10 : maxVal;
   }
 }

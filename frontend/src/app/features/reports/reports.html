@@ -17,7 +17,12 @@
             <p class="subtext">Items that have fallen below the required minimum replenishment threshold</p>
           </div>
         </div>
-        <span class="badge badge-warning">{{ lowStockProducts.length }} items flagged</span>
+        <div class="header-actions">
+          <button (click)="exportCsv(lowStockProducts, 'low_stock')" [disabled]="lowStockProducts.length === 0" class="btn btn-outline btn-sm">
+            📥 Export CSV
+          </button>
+          <span class="badge badge-warning">{{ lowStockProducts.length }} items flagged</span>
+        </div>
       </div>
 
       <div class="table-responsive">
@@ -59,7 +64,12 @@
             <p class="subtext">Zero inventory balance items requiring emergency replenishment</p>
           </div>
         </div>
-        <span class="badge badge-danger">{{ outOfStockProducts.length }} items empty</span>
+        <div class="header-actions">
+          <button (click)="exportCsv(outOfStockProducts, 'out_of_stock')" [disabled]="outOfStockProducts.length === 0" class="btn btn-outline btn-sm">
+            📥 Export CSV
+          </button>
+          <span class="badge badge-danger">{{ outOfStockProducts.length }} items empty</span>
+        </div>
       </div>
 
       <div class="table-responsive">

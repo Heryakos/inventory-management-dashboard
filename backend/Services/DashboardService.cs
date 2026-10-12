@@ -18,6 +18,7 @@ public class DashboardService : IDashboardService
     {
         var totalProducts = await _context.Products.CountAsync();
         var totalUnitsInStock = await _context.Products.SumAsync(p => p.CurrentStock);
+        var totalInventoryValue = await _context.Products.SumAsync(p => p.CurrentStock * p.UnitPrice);
         
         var lowStockProducts = await _context.Products
             .CountAsync(p => p.CurrentStock > 0 && p.CurrentStock <= p.MinimumStockLevel);
@@ -29,6 +30,7 @@ public class DashboardService : IDashboardService
         {
             TotalProducts = totalProducts,
             TotalUnitsInStock = totalUnitsInStock,
+            TotalInventoryValue = totalInventoryValue,
             LowStockProducts = lowStockProducts,
             OutOfStockProducts = outOfStockProducts
         };
@@ -60,7 +62,6 @@ public class DashboardService : IDashboardService
             })
             .ToListAsync();
 
-        // Fill in missing dates
         var result = new List<StockMovementDto>();
         for (int i = days - 1; i >= 0; i--)
         {

@@ -22,6 +22,7 @@ public class CategoryService : ICategoryService
                 Id = c.Id,
                 Name = c.Name,
                 Description = c.Description,
+                ProductsCount = c.Products.Count,
                 CreatedAt = c.CreatedAt
             })
             .ToListAsync();
@@ -29,7 +30,7 @@ public class CategoryService : ICategoryService
 
     public async Task<CategoryDto?> GetCategoryByIdAsync(int id)
     {
-        var category = await _context.Categories.FindAsync(id);
+        var category = await _context.Categories.Include(c => c.Products).FirstOrDefaultAsync(c => c.Id == id);
         if (category == null) return null;
 
         return new CategoryDto
@@ -37,6 +38,7 @@ public class CategoryService : ICategoryService
             Id = category.Id,
             Name = category.Name,
             Description = category.Description,
+            ProductsCount = category.Products.Count,
             CreatedAt = category.CreatedAt
         };
     }
@@ -62,13 +64,14 @@ public class CategoryService : ICategoryService
             Id = category.Id,
             Name = category.Name,
             Description = category.Description,
+            ProductsCount = 0,
             CreatedAt = category.CreatedAt
         };
     }
 
     public async Task<CategoryDto?> UpdateCategoryAsync(int id, UpdateCategoryDto updateDto)
     {
-        var category = await _context.Categories.FindAsync(id);
+        var category = await _context.Categories.Include(c => c.Products).FirstOrDefaultAsync(c => c.Id == id);
         if (category == null) return null;
 
         if (category.Name != updateDto.Name && await _context.Categories.AnyAsync(c => c.Name == updateDto.Name))
@@ -87,6 +90,7 @@ public class CategoryService : ICategoryService
             Id = category.Id,
             Name = category.Name,
             Description = category.Description,
+            ProductsCount = category.Products.Count,
             CreatedAt = category.CreatedAt
         };
     }

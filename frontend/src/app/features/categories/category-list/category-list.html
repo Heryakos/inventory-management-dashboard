@@ -17,6 +17,7 @@
             <th>ID</th>
             <th>Name</th>
             <th>Description</th>
+            <th>Linked Products</th>
             <th>Created At</th>
             <th class="text-right">Actions</th>
           </tr>
@@ -26,14 +27,25 @@
             <td class="id-col">#{{ c.id }}</td>
             <td class="name-col font-semibold">{{ c.name }}</td>
             <td class="desc-col">{{ c.description || '—' }}</td>
+            <td>
+              <span class="count-badge" [class.has-products]="(c.productsCount ?? 0) > 0">
+                {{ c.productsCount ?? 0 }} products
+              </span>
+            </td>
             <td>{{ c.createdAt | date:'mediumDate' }}</td>
             <td class="actions text-right">
               <a [routerLink]="['/categories', c.id, 'edit']" class="btn-text">Edit</a>
-              <button (click)="deleteCategory(c)" class="btn-text danger">Delete</button>
+              <button 
+                (click)="deleteCategory(c)" 
+                class="btn-text danger"
+                [title]="(c.productsCount ?? 0) > 0 ? 'Cannot delete category containing products' : 'Delete category'"
+              >
+                Delete
+              </button>
             </td>
           </tr>
           <tr *ngIf="categories.length === 0">
-            <td colspan="5" class="empty-state">
+            <td colspan="6" class="empty-state">
               <div class="empty-content">
                 <span class="empty-icon">📁</span>
                 <p>No categories found. Click "Add Category" to create one.</p>

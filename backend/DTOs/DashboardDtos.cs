@@ -4,6 +4,7 @@ public class DashboardSummaryDto
 {
     public int TotalProducts { get; set; }
     public int TotalUnitsInStock { get; set; }
+    public decimal TotalInventoryValue { get; set; }
     public int LowStockProducts { get; set; }
     public int OutOfStockProducts { get; set; }
 }

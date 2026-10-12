@@ -2,10 +2,10 @@
   <div class="page-header">
     <div>
       <h2>Dashboard Overview</h2>
-      <p class="subtitle">Live inventory performance metrics and real-time alerts</p>
+      <p class="subtitle">Real-time inventory intelligence, valuation, and transaction metrics</p>
     </div>
     <div class="header-actions">
-      <a routerLink="/stock-transactions/new" class="btn btn-primary">+ New Stock Transaction</a>
+      <a routerLink="/stock-transactions/new" class="btn btn-primary">+ Record Transaction</a>
     </div>
   </div>
   
@@ -17,6 +17,7 @@
         <div class="card-value">{{ summary.totalProducts }}</div>
       </div>
     </div>
+    
     <div class="card summary-card success">
       <div class="card-icon">📦</div>
       <div class="card-meta">
@@ -24,6 +25,15 @@
         <div class="card-value">{{ summary.totalUnitsInStock }}</div>
       </div>
     </div>
+
+    <div class="card summary-card valuation">
+      <div class="card-icon">💵</div>
+      <div class="card-meta">
+        <div class="card-title">Total Inventory Value</div>
+        <div class="card-value">{{ summary.totalInventoryValue | currency }}</div>
+      </div>
+    </div>
+
     <div class="card summary-card warning">
       <div class="card-icon">⚠️</div>
       <div class="card-meta">
@@ -31,6 +41,7 @@
         <div class="card-value">{{ summary.lowStockProducts }}</div>
       </div>
     </div>
+
     <div class="card summary-card danger">
       <div class="card-icon">🛑</div>
       <div class="card-meta">
@@ -46,6 +57,60 @@
       <span>Loading dashboard metrics...</span>
     </div>
   </ng-template>
+
+  <!-- Visual Analytics Row -->
+  <div class="analytics-row">
+    <!-- Category Breakdown Card -->
+    <div class="card category-distribution-card">
+      <div class="card-header">
+        <div class="card-title-group">
+          <h3>Category Distribution</h3>
+          <span class="subtext">Inventory breakdown across product categories</span>
+        </div>
+        <a routerLink="/categories" class="btn-link">View Categories →</a>
+      </div>
+      <div class="category-list">
+        <div class="category-item" *ngFor="let cat of categoryDistributions">
+          <div class="cat-info">
+            <span class="cat-name">{{ cat.categoryName }}</span>
+            <span class="cat-stats">{{ cat.productCount }} SKUs ({{ getCategoryPercentage(cat.productCount) }}%)</span>
+          </div>
+          <div class="progress-bar-bg">
+            <div class="progress-bar-fill" [style.width.%]="getCategoryPercentage(cat.productCount)"></div>
+          </div>
+        </div>
+        <div *ngIf="categoryDistributions.length === 0" class="empty-state">
+          No categories configured.
+        </div>
+      </div>
+    </div>
+
+    <!-- 7-Day Stock Activity Trend Card -->
+    <div class="card stock-movement-card">
+      <div class="card-header">
+        <div class="card-title-group">
+          <h3>7-Day Stock Activity</h3>
+          <span class="subtext">Daily volume of goods received vs shipped</span>
+        </div>
+        <div class="movement-legend">
+          <span class="legend-item"><span class="dot in"></span> Stock In</span>
+          <span class="legend-item"><span class="dot out"></span> Stock Out</span>
+        </div>
+      </div>
+      <div class="movement-bars">
+        <div class="movement-day" *ngFor="let m of stockMovements">
+          <div class="bar-pair">
+            <div class="bar bar-in" [style.height.%]="(m.stockIn / getMaxMovement()) * 100" [title]="'Stock In: ' + m.stockIn"></div>
+            <div class="bar bar-out" [style.height.%]="(m.stockOut / getMaxMovement()) * 100" [title]="'Stock Out: ' + m.stockOut"></div>
+          </div>
+          <span class="day-label">{{ m.date | date:'EEE' }}</span>
+        </div>
+        <div *ngIf="stockMovements.length === 0" class="empty-state">
+          No recent movements in past 7 days.
+        </div>
+      </div>
+    </div>
+  </div>
 
   <div class="dashboard-grid">
     <div class="card recent-transactions">

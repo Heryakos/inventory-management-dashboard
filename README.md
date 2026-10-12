@@ -10,20 +10,25 @@ An enterprise-grade, full-stack Inventory Management Dashboard built with **ASP.
 - **SQL Server & EF Core**: Code-first migrations with automatic schema initialization and data seeding.
 - **Robust Inventory Rules**:
   - Atomic stock movements with strict concurrency handling.
-  - Prevention of negative stock balances (returns 409 Conflict with informative error details).
+  - Prevention of negative stock balances (returns 409 Conflict with descriptive error payload).
   - Cascade delete restrictions protecting products with active transaction history and categories containing active products.
 - **RESTful Endpoints**:
   - Products catalog CRUD, multi-attribute filtering (category, stock status), text search, and pagination.
   - Categories management with associated product counts.
   - Stock transaction audit trails (Stock-In, Stock-Out, and Stock Reconciliation Adjustments).
-  - High-performance Dashboard KPIs and exception reports.
+  - High-performance Dashboard KPIs (including live Total Inventory Valuation).
+- **Automated Test Suite**: Comprehensive xUnit tests covering business rules, atomic stock movements, negative inventory prevention, and referential integrity constraints.
 
 ### Frontend (Angular 18+ Standalone Architecture)
 - **Modular Component Design**: Every component features dedicated template (`.html`), styles (`.scss`), and TypeScript logic (`.ts`).
-- **Interactive Dashboard**: Real-time KPI summary cards (Total Products, Units in Stock, Low Stock Alerts, Out of Stock Items) and live transaction feeds.
-- **Product Management**: Responsive catalog table with instant search, category filtering, stock status pills, and detail views.
+- **Interactive Dashboard**:
+  - Real-time KPI summary cards: Total Products, Units in Stock, **Total Inventory Valuation ($)**, Low Stock Alerts, and Out of Stock Items.
+  - **Category Distribution Visualizer**: Dynamic progress indicators showing SKU share per category.
+  - **7-Day Stock Activity Trend**: Visual comparison of incoming vs outgoing stock volume.
+  - Live transaction and low-stock exception preview tables.
+- **Product Management**: Responsive catalog table with instant search, category filtering, stock status badges, and comprehensive detail views.
 - **Inventory Operations**: Dedicated forms for Stock In, Stock Out, and physical stock count adjustments with live client-side validation.
-- **Audit Logs & Reports**: Comprehensive transaction history with before/after balances and dedicated low-stock exception reporting.
+- **Audit Logs & Reports**: Comprehensive transaction history with before/after balances and dedicated low-stock exception reporting with **1-click CSV export**.
 
 ---
 
@@ -43,12 +48,15 @@ An enterprise-grade, full-stack Inventory Management Dashboard built with **ASP.
 │   └── src/app/
 │       ├── core/           # Services, models, and HTTP interceptors
 │       ├── features/
-│       │   ├── categories/ # Category list and creation/edit forms
-│       │   ├── dashboard/  # Overview metrics, charts, and preview tables
+│       │   ├── categories/ # Category list (with product counts) & form
+│       │   ├── dashboard/  # Overview KPIs, charts, and preview tables
 │       │   ├── products/   # Product catalog, detail, and forms
-│       │   ├── reports/    # Low stock & out-of-stock reporting
+│       │   ├── reports/    # Low stock & out-of-stock reporting with CSV export
 │       │   └── stock-transactions/ # Stock in/out/adjustment forms and audit trail
 │       └── layout/         # Application header and sidebar navigation
+│
+├── tests/
+│   └── InventoryDashboard.Tests/ # xUnit test suite for business rules and services
 └── InventoryDashboard.sln
 ```
 
@@ -76,6 +84,11 @@ npm install
 npm start
 ```
 Navigate to `http://localhost:4200/` in your browser.
+
+### 3. Running Automated Tests
+```bash
+dotnet test
+```
 
 ---
 

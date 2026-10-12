@@ -14,7 +14,7 @@ public class Product
     public DateTime? UpdatedAt { get; set; }
     
     // Concurrency token
-    public byte[] RowVersion { get; set; } = null!;
+    public byte[] RowVersion { get; set; } = Array.Empty<byte>();
 
     public Category Category { get; set; } = null!;
     public ICollection<StockTransaction> StockTransactions { get; set; } = new List<StockTransaction>();

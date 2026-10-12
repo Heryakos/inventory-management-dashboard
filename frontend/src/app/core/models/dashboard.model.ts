@@ -1,6 +1,7 @@
 export interface DashboardSummary {
   totalProducts: number;
   totalUnitsInStock: number;
+  totalInventoryValue: number;
   lowStockProducts: number;
   outOfStockProducts: number;
 }

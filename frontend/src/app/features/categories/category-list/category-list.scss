@@ -152,3 +152,19 @@
     font-size: 0.95rem;
   }
 }
+
+.count-badge {
+  padding: 4px 10px;
+  border-radius: 9999px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  background-color: #edf2f7;
+  color: #718096;
+
+  &.has-products {
+    background-color: #ebf8ff;
+    color: #2b6cb0;
+    font-weight: 600;
+  }
+}
+
