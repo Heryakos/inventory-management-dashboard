@@ -1,0 +1,106 @@
+<div class="page-container">
+  <div class="page-header">
+    <div class="header-titles">
+      <h2>Products</h2>
+      <p class="subtitle">Manage your product catalog, pricing, and live inventory levels</p>
+    </div>
+    <a routerLink="/products/new" class="btn btn-primary">
+      <span>+ Add Product</span>
+    </a>
+  </div>
+
+  <div class="card">
+    <div class="filters">
+      <div class="search-box">
+        <span class="search-icon">🔍</span>
+        <input 
+          type="text" 
+          [(ngModel)]="searchQuery" 
+          (keyup.enter)="loadProducts()" 
+          placeholder="Search by SKU, name, or description..." 
+          class="form-control search-input"
+        />
+      </div>
+      
+      <select [(ngModel)]="selectedCategory" (change)="loadProducts()" class="form-control filter-select">
+        <option [ngValue]="null">All Categories</option>
+        <option *ngFor="let c of categories" [value]="c.id">{{ c.name }}</option>
+      </select>
+
+      <select [(ngModel)]="selectedStockStatus" (change)="loadProducts()" class="form-control filter-select">
+        <option [ngValue]="null">All Stock Statuses</option>
+        <option value="InStock">In Stock</option>
+        <option value="LowStock">Low Stock</option>
+        <option value="OutOfStock">Out of Stock</option>
+      </select>
+      
+      <button (click)="loadProducts()" class="btn btn-secondary">Filter</button>
+      <button (click)="clearFilters()" class="btn btn-outline">Reset</button>
+    </div>
+
+    <div *ngIf="loading" class="loading-state">
+      <div class="spinner"></div>
+      <span>Loading catalog items...</span>
+    </div>
+    
+    <div class="table-responsive" *ngIf="!loading">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>SKU / Code</th>
+            <th>Product Name</th>
+            <th>Category</th>
+            <th>Unit Price</th>
+            <th>Stock Level</th>
+            <th>Status</th>
+            <th class="text-right">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let p of products">
+            <td class="font-mono text-sm font-semibold">{{ p.productCode }}</td>
+            <td class="font-semibold">{{ p.name }}</td>
+            <td>
+              <span class="category-badge">{{ p.categoryName }}</span>
+            </td>
+            <td class="font-mono">{{ p.unitPrice | currency }}</td>
+            <td>
+              <span class="stock-qty" [class.text-danger]="p.currentStock <= p.minimumStockLevel">
+                {{ p.currentStock }}
+              </span>
+              <span class="stock-min" title="Minimum stock threshold">(min: {{ p.minimumStockLevel }})</span>
+            </td>
+            <td>
+              <span class="status-indicator" [ngClass]="p.stockStatus.toLowerCase().replace(' ', '-')">
+                {{ p.stockStatus }}
+              </span>
+            </td>
+            <td class="actions text-right">
+              <a [routerLink]="['/products', p.id]" class="btn-text">View</a>
+              <a [routerLink]="['/products', p.id, 'edit']" class="btn-text">Edit</a>
+              <button (click)="deleteProduct(p)" class="btn-text danger">Delete</button>
+            </td>
+          </tr>
+          <tr *ngIf="products.length === 0">
+            <td colspan="7" class="empty-state">
+              <div class="empty-content">
+                <span class="empty-icon">📦</span>
+                <p>No products match your search or filter criteria.</p>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="pagination" *ngIf="totalPages > 1 && !loading">
+      <div class="pagination-info">
+        Showing page <strong>{{ page }}</strong> of <strong>{{ totalPages }}</strong>
+      </div>
+      <div class="pagination-actions">
+        <button [disabled]="page === 1" (click)="changePage(page - 1)" class="btn btn-outline btn-sm">← Previous</button>
+        <button [disabled]="page === totalPages" (click)="changePage(page + 1)" class="btn btn-outline btn-sm">Next →</button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,122 @@
+<div class="page-container">
+  <div class="page-header">
+    <div class="header-titles">
+      <h2>{{ isEditMode ? 'Edit Product' : 'Add New Product' }}</h2>
+      <p class="subtitle">{{ isEditMode ? 'Update catalog specifications and pricing' : 'Register a new SKU and establish starting stock levels' }}</p>
+    </div>
+    <a routerLink="/products" class="btn btn-outline">← Back to Catalog</a>
+  </div>
+
+  <div class="card">
+    <form [formGroup]="productForm" (ngSubmit)="onSubmit()">
+      
+      <div class="form-row" *ngIf="!isEditMode">
+        <div class="form-group">
+          <label for="productCode">Product SKU / Code <span class="required">*</span></label>
+          <input 
+            id="productCode"
+            type="text" 
+            formControlName="productCode" 
+            class="form-control"
+            placeholder="e.g. ELEC-001"
+          />
+          <div class="error" *ngIf="f['productCode'].touched && f['productCode'].invalid">
+            Product Code / SKU is required.
+          </div>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group flex-2">
+          <label for="productName">Product Name <span class="required">*</span></label>
+          <input 
+            id="productName"
+            type="text" 
+            formControlName="name" 
+            class="form-control"
+            placeholder="e.g. Mechanical Keyboard RGB"
+          />
+          <div class="error" *ngIf="f['name'].touched && f['name'].invalid">
+            Product name is required.
+          </div>
+        </div>
+        
+        <div class="form-group flex-1">
+          <label for="productCategory">Category <span class="required">*</span></label>
+          <select id="productCategory" formControlName="categoryId" class="form-control">
+            <option value="">Select category...</option>
+            <option *ngFor="let c of categories" [value]="c.id">{{ c.name }}</option>
+          </select>
+          <div class="error" *ngIf="f['categoryId'].touched && f['categoryId'].invalid">
+            Category is required.
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="productDescription">Description</label>
+        <textarea 
+          id="productDescription"
+          formControlName="description" 
+          class="form-control" 
+          rows="3"
+          placeholder="Product specifications, features, and warehouse notes..."
+        ></textarea>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="unitPrice">Unit Price ($) <span class="required">*</span></label>
+          <input 
+            id="unitPrice"
+            type="number" 
+            formControlName="unitPrice" 
+            class="form-control" 
+            step="0.01" 
+            min="0"
+            placeholder="0.00"
+          />
+          <div class="error" *ngIf="f['unitPrice'].touched && f['unitPrice'].invalid">
+            Valid unit price is required.
+          </div>
+        </div>
+
+        <div class="form-group" *ngIf="!isEditMode">
+          <label for="initialStock">Initial Stock Quantity</label>
+          <input 
+            id="initialStock"
+            type="number" 
+            formControlName="initialStockQuantity" 
+            class="form-control" 
+            min="0"
+            placeholder="0"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="minStock">Minimum Stock Alert Threshold</label>
+          <input 
+            id="minStock"
+            type="number" 
+            formControlName="minimumStockLevel" 
+            class="form-control" 
+            min="0"
+            placeholder="5"
+          />
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <a routerLink="/products" class="btn btn-secondary">Cancel</a>
+        <button type="submit" [disabled]="productForm.invalid || isSaving" class="btn btn-primary">
+          {{ isSaving ? 'Saving...' : (isEditMode ? 'Update Product' : 'Save Product') }}
+        </button>
+      </div>
+      
+      <div *ngIf="errorMessage" class="alert alert-danger mt-3">
+        {{ errorMessage }}
+      </div>
+
+    </form>
+  </div>
+</div>

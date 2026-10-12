@@ -1,0 +1,91 @@
+<div class="page-container">
+  <div class="page-header">
+    <div class="header-titles">
+      <h2>Record Stock Transaction</h2>
+      <p class="subtitle">Perform verified stock replenishment, stock deduction, or inventory reconciliation</p>
+    </div>
+    <a routerLink="/stock-transactions" class="btn btn-outline">← View History</a>
+  </div>
+
+  <div class="card">
+    <form [formGroup]="txForm" (ngSubmit)="onSubmit()">
+      
+      <div class="form-row">
+        <div class="form-group">
+          <label for="txType">Transaction Type <span class="required">*</span></label>
+          <select id="txType" formControlName="type" class="form-control" (change)="onTypeChange()">
+            <option value="In">Stock In (Receive Goods)</option>
+            <option value="Out">Stock Out (Ship / Consume Goods)</option>
+            <option value="Adjust">Stock Adjustment (Audit Count)</option>
+          </select>
+        </div>
+        
+        <div class="form-group">
+          <label for="txProduct">Product <span class="required">*</span></label>
+          <select id="txProduct" formControlName="productId" class="form-control" (change)="onProductChange()">
+            <option value="">Select target product...</option>
+            <option *ngFor="let p of products" [value]="p.id">
+              {{ p.productCode }} - {{ p.name }} (Current Stock: {{ p.currentStock }})
+            </option>
+          </select>
+          <div class="error" *ngIf="f['productId'].touched && f['productId'].invalid">
+            Target product is required.
+          </div>
+        </div>
+      </div>
+
+      <div class="alert alert-info" *ngIf="selectedProduct">
+        <div class="alert-content">
+          <span class="info-icon">ℹ️</span>
+          <div>
+            Current On-Hand Balance: <strong>{{ selectedProduct.currentStock }} units</strong>
+            <span *ngIf="f['type'].value === 'Out'" class="max-note"> (Maximum available to remove: {{ selectedProduct.currentStock }})</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="txQty">{{ quantityLabel }} <span class="required">*</span></label>
+          <input 
+            id="txQty"
+            type="number" 
+            formControlName="quantity" 
+            class="form-control" 
+            [min]="0"
+            placeholder="0"
+          />
+          <div class="error" *ngIf="f['quantity'].touched && f['quantity'].invalid">
+            Quantity is invalid or exceeds available inventory.
+          </div>
+          <div class="help-text" *ngIf="f['type'].value === 'Adjust'">
+            Enter the exact physical quantity verified during inventory audit. The system will calculate positive or negative delta automatically.
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="txNotes">Reason / Notes / Reference Details</label>
+        <textarea 
+          id="txNotes"
+          formControlName="notes" 
+          class="form-control" 
+          rows="3"
+          placeholder="Purchase order #, delivery note #, customer order #, or reason for stock adjustment..."
+        ></textarea>
+      </div>
+
+      <div class="form-actions">
+        <a routerLink="/products" class="btn btn-secondary">Cancel</a>
+        <button type="submit" [disabled]="txForm.invalid || isSaving" class="btn btn-primary">
+          {{ isSaving ? 'Processing...' : 'Submit Transaction' }}
+        </button>
+      </div>
+      
+      <div *ngIf="errorMessage" class="alert alert-danger mt-3">
+        {{ errorMessage }}
+      </div>
+
+    </form>
+  </div>
+</div>

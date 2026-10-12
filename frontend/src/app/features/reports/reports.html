@@ -1,0 +1,92 @@
+<div class="page-container">
+  <div class="page-header">
+    <div class="header-titles">
+      <h2>Inventory Reports & Exceptions</h2>
+      <p class="subtitle">Actionable analysis of stock shortages, stockout risks, and inventory health</p>
+    </div>
+  </div>
+
+  <div class="report-sections">
+    <!-- Low Stock Exception Report -->
+    <div class="card">
+      <div class="card-header">
+        <div class="header-icon-group">
+          <span class="report-icon warning">⚠️</span>
+          <div>
+            <h3>Low Stock Alert Report</h3>
+            <p class="subtext">Items that have fallen below the required minimum replenishment threshold</p>
+          </div>
+        </div>
+        <span class="badge badge-warning">{{ lowStockProducts.length }} items flagged</span>
+      </div>
+
+      <div class="table-responsive">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>SKU Code</th>
+              <th>Product Name</th>
+              <th>Category</th>
+              <th>Current Stock</th>
+              <th>Min Threshold</th>
+              <th>Deficit</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let p of lowStockProducts">
+              <td class="font-mono text-sm font-semibold">{{ p.productCode }}</td>
+              <td class="font-semibold">{{ p.name }}</td>
+              <td><span class="category-badge">{{ p.categoryName }}</span></td>
+              <td><span class="stock-warn">{{ p.currentStock }}</span></td>
+              <td class="text-muted">{{ p.minimumStockLevel }}</td>
+              <td class="text-danger font-semibold">-{{ p.minimumStockLevel - p.currentStock }} units</td>
+            </tr>
+            <tr *ngIf="lowStockProducts.length === 0">
+              <td colspan="6" class="empty-state">No products are currently under the low-stock threshold.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Out of Stock Exception Report -->
+    <div class="card">
+      <div class="card-header">
+        <div class="header-icon-group">
+          <span class="report-icon danger">🛑</span>
+          <div>
+            <h3>Out of Stock Critical Report</h3>
+            <p class="subtext">Zero inventory balance items requiring emergency replenishment</p>
+          </div>
+        </div>
+        <span class="badge badge-danger">{{ outOfStockProducts.length }} items empty</span>
+      </div>
+
+      <div class="table-responsive">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>SKU Code</th>
+              <th>Product Name</th>
+              <th>Category</th>
+              <th>Current Stock</th>
+              <th>Target Min Level</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let p of outOfStockProducts">
+              <td class="font-mono text-sm font-semibold">{{ p.productCode }}</td>
+              <td class="font-semibold">{{ p.name }}</td>
+              <td><span class="category-badge">{{ p.categoryName }}</span></td>
+              <td><span class="stock-danger">0 (Depleted)</span></td>
+              <td class="font-semibold">{{ p.minimumStockLevel }} units</td>
+            </tr>
+            <tr *ngIf="outOfStockProducts.length === 0">
+              <td colspan="5" class="empty-state">No products are completely out of stock. Excellent!</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

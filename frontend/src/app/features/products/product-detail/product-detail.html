@@ -1,0 +1,120 @@
+<div class="page-container" *ngIf="product">
+  <div class="page-header">
+    <div class="header-titles">
+      <h2>{{ product.name }}</h2>
+      <p class="subtitle">SKU: <span class="font-mono">{{ product.productCode }}</span></p>
+    </div>
+    <div class="actions">
+      <a routerLink="/products" class="btn btn-outline">← Back to Products</a>
+      <a [routerLink]="['/products', product.id, 'edit']" class="btn btn-primary">Edit Product</a>
+    </div>
+  </div>
+
+  <div class="dashboard-grid">
+    <div class="card detail-card">
+      <div class="card-header">
+        <h3>Product Specifications</h3>
+      </div>
+      
+      <div class="info-list">
+        <div class="info-row">
+          <span class="label">Product Code:</span>
+          <span class="value font-mono font-semibold">{{ product.productCode }}</span>
+        </div>
+        <div class="info-row">
+          <span class="label">Category:</span>
+          <span class="value">
+            <span class="category-badge">{{ product.categoryName }}</span>
+          </span>
+        </div>
+        <div class="info-row">
+          <span class="label">Unit Price:</span>
+          <span class="value font-mono text-primary font-semibold">{{ product.unitPrice | currency }}</span>
+        </div>
+        <div class="info-row">
+          <span class="label">Date Created:</span>
+          <span class="value">{{ product.createdAt | date:'mediumDate' }}</span>
+        </div>
+        <div class="info-row">
+          <span class="label">Description:</span>
+          <span class="value text-description">{{ product.description || 'No description provided.' }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card stock-card">
+      <div class="card-header">
+        <h3>Inventory Balance</h3>
+      </div>
+      <div class="stock-display">
+        <div class="stock-number" [class.text-danger]="product.currentStock <= product.minimumStockLevel">
+          {{ product.currentStock }}
+        </div>
+        <div class="stock-label">Units Available in Stock</div>
+      </div>
+      
+      <div class="info-list mt-3">
+        <div class="info-row">
+          <span class="label">Stock Status:</span>
+          <span class="status-indicator" [ngClass]="product.stockStatus.toLowerCase().replace(' ', '-')">
+            {{ product.stockStatus }}
+          </span>
+        </div>
+        <div class="info-row">
+          <span class="label">Reorder Level:</span>
+          <span class="value font-semibold">{{ product.minimumStockLevel }} units</span>
+        </div>
+      </div>
+      
+      <div class="stock-actions mt-4">
+        <a [routerLink]="['/stock-transactions/new']" [queryParams]="{ productId: product.id, type: 'In' }" class="btn btn-sm stockin-btn">
+          + Stock In
+        </a>
+        <a [routerLink]="['/stock-transactions/new']" [queryParams]="{ productId: product.id, type: 'Out' }" class="btn btn-sm stockout-btn">
+          - Stock Out
+        </a>
+        <a [routerLink]="['/stock-transactions/new']" [queryParams]="{ productId: product.id, type: 'Adjust' }" class="btn btn-sm adjust-btn">
+          ⚡ Adjust
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="card mt-4">
+    <div class="card-header border-bottom">
+      <div class="card-title-group">
+        <h3>Recent Transaction History</h3>
+        <span class="subtext">Stock movement audit trail for this SKU</span>
+      </div>
+    </div>
+    <div class="table-responsive">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Date & Time</th>
+            <th>Reference</th>
+            <th>Type</th>
+            <th>Quantity Changed</th>
+            <th>Previous Stock</th>
+            <th>New Balance</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let t of transactions">
+            <td class="text-muted">{{ t.date | date:'short' }}</td>
+            <td class="font-mono text-sm">{{ t.transactionReference }}</td>
+            <td>
+              <span class="badge" [ngClass]="t.transactionType.toLowerCase()">{{ t.transactionType }}</span>
+            </td>
+            <td class="font-semibold">{{ t.quantity }}</td>
+            <td class="text-muted">{{ t.previousStock }}</td>
+            <td class="font-semibold">{{ t.newStock }}</td>
+          </tr>
+          <tr *ngIf="transactions.length === 0">
+            <td colspan="6" class="empty-state">No transaction logs recorded yet for this product.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

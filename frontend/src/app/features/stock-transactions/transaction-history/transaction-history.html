@@ -1,0 +1,77 @@
+<div class="page-container">
+  <div class="page-header">
+    <div class="header-titles">
+      <h2>Stock Transactions</h2>
+      <p class="subtitle">Complete chronological inventory audit log across all warehouses and SKUs</p>
+    </div>
+    <a routerLink="/stock-transactions/new" class="btn btn-primary">
+      <span>+ Record Transaction</span>
+    </a>
+  </div>
+
+  <div class="card">
+    <div class="filters">
+      <div class="search-box">
+        <span class="search-icon">🔍</span>
+        <input 
+          type="text" 
+          [(ngModel)]="searchQuery" 
+          (keyup.enter)="loadTransactions()" 
+          placeholder="Search by reference, product name, or notes..." 
+          class="form-control search-input"
+        />
+      </div>
+      <button (click)="loadTransactions()" class="btn btn-secondary">Search</button>
+      <button (click)="clearFilters()" class="btn btn-outline">Reset</button>
+    </div>
+
+    <div class="table-responsive">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Date & Time</th>
+            <th>Reference</th>
+            <th>Product Name</th>
+            <th>Type</th>
+            <th>Qty</th>
+            <th>Prev Stock</th>
+            <th>New Stock</th>
+            <th>Notes</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let t of transactions">
+            <td class="text-muted">{{ t.date | date:'short' }}</td>
+            <td class="font-mono text-sm font-semibold">{{ t.transactionReference }}</td>
+            <td class="font-semibold">{{ t.productName }}</td>
+            <td>
+              <span class="badge" [ngClass]="t.transactionType.toLowerCase()">{{ t.transactionType }}</span>
+            </td>
+            <td class="font-semibold">{{ t.quantity }}</td>
+            <td class="text-muted">{{ t.previousStock }}</td>
+            <td class="font-semibold">{{ t.newStock }}</td>
+            <td class="notes-col text-muted">{{ t.notes || '—' }}</td>
+          </tr>
+          <tr *ngIf="transactions.length === 0">
+            <td colspan="8" class="empty-state">
+              <div class="empty-content">
+                <span class="empty-icon">🔄</span>
+                <p>No transactions found matching your criteria.</p>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="pagination" *ngIf="totalPages > 1">
+      <div class="pagination-info">
+        Page <strong>{{ page }}</strong> of <strong>{{ totalPages }}</strong>
+      </div>
+      <div class="pagination-actions">
+        <button [disabled]="page === 1" (click)="changePage(page - 1)" class="btn btn-outline btn-sm">← Previous</button>
+        <button [disabled]="page === totalPages" (click)="changePage(page + 1)" class="btn btn-outline btn-sm">Next →</button>
+      </div>
+    </div>
+  </div>
+</div>

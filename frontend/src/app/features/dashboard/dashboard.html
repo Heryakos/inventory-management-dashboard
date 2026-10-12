@@ -1,0 +1,126 @@
+<div class="dashboard-container">
+  <div class="page-header">
+    <div>
+      <h2>Dashboard Overview</h2>
+      <p class="subtitle">Live inventory performance metrics and real-time alerts</p>
+    </div>
+    <div class="header-actions">
+      <a routerLink="/stock-transactions/new" class="btn btn-primary">+ New Stock Transaction</a>
+    </div>
+  </div>
+  
+  <div class="summary-cards" *ngIf="summary$ | async as summary; else loading">
+    <div class="card summary-card primary">
+      <div class="card-icon">🏷️</div>
+      <div class="card-meta">
+        <div class="card-title">Total Products</div>
+        <div class="card-value">{{ summary.totalProducts }}</div>
+      </div>
+    </div>
+    <div class="card summary-card success">
+      <div class="card-icon">📦</div>
+      <div class="card-meta">
+        <div class="card-title">Units in Stock</div>
+        <div class="card-value">{{ summary.totalUnitsInStock }}</div>
+      </div>
+    </div>
+    <div class="card summary-card warning">
+      <div class="card-icon">⚠️</div>
+      <div class="card-meta">
+        <div class="card-title">Low Stock Alert</div>
+        <div class="card-value">{{ summary.lowStockProducts }}</div>
+      </div>
+    </div>
+    <div class="card summary-card danger">
+      <div class="card-icon">🛑</div>
+      <div class="card-meta">
+        <div class="card-title">Out of Stock</div>
+        <div class="card-value">{{ summary.outOfStockProducts }}</div>
+      </div>
+    </div>
+  </div>
+  
+  <ng-template #loading>
+    <div class="loading-state">
+      <div class="spinner"></div>
+      <span>Loading dashboard metrics...</span>
+    </div>
+  </ng-template>
+
+  <div class="dashboard-grid">
+    <div class="card recent-transactions">
+      <div class="card-header">
+        <div class="card-title-group">
+          <h3>Recent Transactions</h3>
+          <span class="subtext">Latest stock-in, stock-out, and adjustment events</span>
+        </div>
+        <a routerLink="/stock-transactions" class="btn-link">View All →</a>
+      </div>
+      <div class="table-responsive">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Ref</th>
+              <th>Product</th>
+              <th>Type</th>
+              <th>Qty</th>
+              <th>Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let t of recentTransactions">
+              <td class="font-mono text-sm">{{ t.transactionReference }}</td>
+              <td class="font-semibold">{{ t.productName }}</td>
+              <td>
+                <span class="badge" [ngClass]="t.transactionType.toLowerCase()">{{ t.transactionType }}</span>
+              </td>
+              <td class="font-semibold">{{ t.quantity }}</td>
+              <td class="text-muted">{{ t.date | date:'short' }}</td>
+            </tr>
+            <tr *ngIf="recentTransactions.length === 0">
+              <td colspan="5" class="empty-state">No recent transactions recorded</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    
+    <div class="card low-stock">
+      <div class="card-header">
+        <div class="card-title-group">
+          <h3>Low Stock Preview</h3>
+          <span class="subtext">Items at or below reorder threshold</span>
+        </div>
+        <a routerLink="/products" [queryParams]="{ stockStatus: 'LowStock' }" class="btn-link">View All →</a>
+      </div>
+      <div class="table-responsive">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Product</th>
+              <th>Stock</th>
+              <th>Min</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let p of lowStockProducts">
+              <td>
+                <div class="product-item">
+                  <span class="product-code">{{ p.productCode }}</span>
+                  <span class="product-name">{{ p.name }}</span>
+                </div>
+              </td>
+              <td class="font-semibold text-danger">{{ p.currentStock }}</td>
+              <td class="text-muted">{{ p.minimumStockLevel }}</td>
+              <td><span class="status-indicator low-stock">Low Stock</span></td>
+            </tr>
+            <tr *ngIf="lowStockProducts.length === 0">
+              <td colspan="4" class="empty-state">All product stock levels are healthy</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,47 @@
+<div class="page-container">
+  <div class="page-header">
+    <div class="header-titles">
+      <h2>Categories</h2>
+      <p class="subtitle">Organize and classify products in your inventory</p>
+    </div>
+    <a routerLink="/categories/new" class="btn btn-primary">
+      <span>+ Add Category</span>
+    </a>
+  </div>
+
+  <div class="card">
+    <div class="table-responsive">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Created At</th>
+            <th class="text-right">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let c of categories">
+            <td class="id-col">#{{ c.id }}</td>
+            <td class="name-col font-semibold">{{ c.name }}</td>
+            <td class="desc-col">{{ c.description || '—' }}</td>
+            <td>{{ c.createdAt | date:'mediumDate' }}</td>
+            <td class="actions text-right">
+              <a [routerLink]="['/categories', c.id, 'edit']" class="btn-text">Edit</a>
+              <button (click)="deleteCategory(c)" class="btn-text danger">Delete</button>
+            </td>
+          </tr>
+          <tr *ngIf="categories.length === 0">
+            <td colspan="5" class="empty-state">
+              <div class="empty-content">
+                <span class="empty-icon">📁</span>
+                <p>No categories found. Click "Add Category" to create one.</p>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

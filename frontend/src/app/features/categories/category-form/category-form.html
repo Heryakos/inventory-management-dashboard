@@ -1,0 +1,51 @@
+<div class="page-container">
+  <div class="page-header">
+    <div class="header-titles">
+      <h2>{{ isEditMode ? 'Edit Category' : 'Add New Category' }}</h2>
+      <p class="subtitle">{{ isEditMode ? 'Update existing inventory category details' : 'Create a new classification category for products' }}</p>
+    </div>
+    <a routerLink="/categories" class="btn btn-outline">← Back to Categories</a>
+  </div>
+
+  <div class="card">
+    <form [formGroup]="categoryForm" (ngSubmit)="onSubmit()">
+      
+      <div class="form-group">
+        <label for="categoryName">Category Name <span class="required">*</span></label>
+        <input 
+          id="categoryName"
+          type="text" 
+          formControlName="name" 
+          class="form-control"
+          placeholder="e.g. Electronics, Office Supplies"
+        />
+        <div class="error" *ngIf="f['name'].touched && f['name'].invalid">
+          Category name is required.
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="categoryDescription">Description</label>
+        <textarea 
+          id="categoryDescription"
+          formControlName="description" 
+          class="form-control" 
+          rows="4"
+          placeholder="Brief description of products categorized under this group..."
+        ></textarea>
+      </div>
+
+      <div class="form-actions">
+        <a routerLink="/categories" class="btn btn-secondary">Cancel</a>
+        <button type="submit" [disabled]="categoryForm.invalid || isSaving" class="btn btn-primary">
+          {{ isSaving ? 'Saving...' : (isEditMode ? 'Update Category' : 'Save Category') }}
+        </button>
+      </div>
+      
+      <div *ngIf="errorMessage" class="alert alert-danger mt-3">
+        {{ errorMessage }}
+      </div>
+
+    </form>
+  </div>
+</div>
