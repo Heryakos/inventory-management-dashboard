@@ -32,6 +32,28 @@ An enterprise-grade, full-stack Inventory Management Dashboard built with **ASP.
 
 ---
 
+## 📸 Screenshots & Live UI
+
+### 1. Executive Dashboard Overview
+![Dashboard Overview](screenshots/01_dashboard_overview.png)
+
+### 2. Product Catalog & Live Stock Status
+![Product Catalog](screenshots/02_product_catalog.png)
+
+### 3. SKU Details & Inventory Balance
+![Product Detail](screenshots/03_product_detail.png)
+
+### 4. Stock In / Stock Out & Validation Rules
+![Record Stock Transaction](screenshots/05_record_transaction.png)
+
+### 5. Chronological Stock Movement Audit Trail
+![Stock Transactions](screenshots/04_stock_transactions.png)
+
+### 6. Inventory Exceptions & 1-Click CSV Export
+![Inventory Reports](screenshots/07_inventory_reports.png)
+
+---
+
 ## 🏗️ Architecture & Project Structure
 
 ```text
